@@ -23,7 +23,7 @@ export default function ChatComponent() {
 
     try {
       // Realizamos la solicitud al API route que llamará a la función de OpenAI
-      const response = await fetch('../api/openai', {
+      const response = await fetch('api/openai', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
