@@ -1,34 +1,21 @@
-import OpenAI from "openai";
+import { HfInference } from "@huggingface/inference";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "",
-});
+const hf = new HfInference(process.env.HUGGINGFACE_API_KEY || ""); // Configura tu token de Hugging Face
 
-export const getChatGptResponse = async (message: string): Promise<string> => {
+export const getHuggingFaceResponse = async (message: string): Promise<string> => {
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
+    const response = await hf.textGeneration({
+      model: "gpt2", // Modelo de Hugging Face
+      inputs: message,
     });
 
-    if (!completion.choices || !completion.choices[0].message) {
-      throw new Error("La respuesta de OpenAI no contiene mensajes válidos.");
+    if (!response.generated_text) {
+      throw new Error("La respuesta del modelo no contiene texto válido.");
     }
 
-    const content = completion.choices[0].message.content;
-    if (content === null) {
-      throw new Error("La respuesta de OpenAI contiene un mensaje nulo.");
-    }
-    return content;
+    return response.generated_text.trim(); // Devuelve la respuesta generada
   } catch (error: any) {
-    if (error.code === "insufficient_quota") {
-      console.error("Error: Límite de uso de OpenAI alcanzado.");
-      throw new Error(
-        "Has alcanzado el límite de uso permitido. Verifica tu plan o espera hasta que se reinicien los límites."
-      );
-    }
-
-    console.error("Error al interactuar con OpenAI:", error);
+    console.error("Error al interactuar con Hugging Face:", error);
     throw new Error("Hubo un error al procesar tu solicitud.");
   }
 };

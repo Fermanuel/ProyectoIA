@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getChatGptResponse } from "../../../lib/openai";
+import { getHuggingFaceResponse } from "../../../lib/openai";
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const assistantMessage = await getChatGptResponse(message);
+    const assistantMessage = await getHuggingFaceResponse(message);
 
     return NextResponse.json({ content: assistantMessage });
   } catch (error: any) {
